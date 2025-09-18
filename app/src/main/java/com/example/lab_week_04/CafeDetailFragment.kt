@@ -6,41 +6,37 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.annotation.StringRes
 
+private const val TAB_CONTENT_RES_ID = "TAB_CONTENT_RES_ID"
 class CafeDetailFragment : Fragment() {
-
-    private var cafeTitleResId: Int = 0
-
+    private var content: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            cafeTitleResId = it.getInt(ARG_CAFE_TITLE_RES_ID)
+            val contentResId = it.getInt(TAB_CONTENT_RES_ID) // Get the Int (resource ID)
+            if (contentResId != 0) { // Check if a valid resource ID was passed
+                content = getString(contentResId) // Get the actual string using the ID
+            }
         }
     }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_cafe_detail, container, false)
-        val titleTextView = view.findViewById<TextView>(R.id.cafe_detail_title_textview)
-        if (cafeTitleResId != 0) {
-            titleTextView.text = getString(cafeTitleResId)
-        } else {
-            titleTextView.text = "Cafe Details"
-        }
-        return view
+
+        return inflater.inflate(R.layout.fragment_cafe_detail, container, false)
     }
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        view.findViewById<TextView>(R.id.content_description)
+            ?.text = content
+    }
     companion object {
-        private const val ARG_CAFE_TITLE_RES_ID = "cafe_title_res_id"
 
-        @JvmStatic
-        fun newInstance(@StringRes cafeTitleResId: Int) =
+        fun newInstance(contentResId: Int) =
             CafeDetailFragment().apply {
                 arguments = Bundle().apply {
-                    putInt(ARG_CAFE_TITLE_RES_ID, cafeTitleResId)
+                    putInt(TAB_CONTENT_RES_ID, contentResId) // Store as an Int
                 }
             }
     }
